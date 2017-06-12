@@ -1,15 +1,16 @@
 var express = require('express');
 var http = require('http');
+var request = require('request');
+var webdriver = require('selenium-webdriver'),
+  By = webdriver.By,
+  until = webdriver.until;
+var driver = new webdriver.Builder()
+  .forBrowser('chrome')
+  .build();
 var app = express();
 
 app.get('/', function(req, res) {
   var start = new Date().getTime();
-  var webdriver = require('selenium-webdriver'),
-    By = webdriver.By,
-    until = webdriver.until;
-  var driver = new webdriver.Builder()
-    .forBrowser('phantomjs')
-    .build();
   var toReturn = [];
   var names = [];
   var links = [];
@@ -23,7 +24,7 @@ app.get('/', function(req, res) {
       // driver.wait(until.elementIsEnabled(elem))
       driver.wait(until.stalenessOf(elem), 5000)
         .then(_ => {
-          driver.findElements(By.xpath("//*[@id='block-system-main']/div/div[3]/table/tbody/tr"))
+          driver.findElements(By.xpath("//*[@id='block-system-main']/div/div[3]/table/tbody/tr[/td/text != 'vino']"))
             .then((elems) => {
               for (var i in elems) {
                 elems[i].findElement(By.css("td > a"))
@@ -57,6 +58,10 @@ app.get('/', function(req, res) {
       var time = end - start;
       console.log('Execution time: ' + time);
     })
+});
+
+app.get('/page', function(req, res) {
+  driver.get(req.query.link);
 });
 
 app.listen(8080, function() {
