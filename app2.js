@@ -34,9 +34,10 @@ app.get('/', function(req, res) {
     // })
     // .then(_ => driver.wait(until.elementLocated(By.css("#ATTR_ENTRY_:first-child > div.attraction_clarity_cell > div > div img.photo_image")), 5000))
     // driver.sleep(2000)
+    // .then(_ => driver.findElements(By.css("#ATTR_ENTRY_ > div.attraction_clarity_cell > div > div")))
     .then(_ => driver.findElements(By.css("#ATTR_ENTRY_ > div.attraction_clarity_cell > div > div")))
     .then((elem) => {
-      console.log('After loading page: ' + time);
+      // console.log('After loading page: ' + time);
       for (var i = 0; i < elem.length; i++) {
         // elem[i].getText()
         //   .then((txt) => {
