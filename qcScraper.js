@@ -5,7 +5,7 @@ var webdriver = require('selenium-webdriver'),
   By = webdriver.By,
   until = webdriver.until;
 var driver = new webdriver.Builder()
-  .forBrowser('chrome')
+  .forBrowser('phantomjs')
   .build();
 var app = express();
 
@@ -24,7 +24,7 @@ app.get('/', function(req, res) {
       // driver.wait(until.elementIsEnabled(elem))
       driver.wait(until.stalenessOf(elem), 5000)
         .then(_ => {
-          driver.findElements(By.xpath("//*[@id='block-system-main']/div/div[3]/table/tbody/tr[/td/text != 'vino']"))
+          driver.findElements(By.xpath("//*[@id='block-system-main']/div/div[3]/table/tbody/tr"))
             .then((elems) => {
               for (var i in elems) {
                 elems[i].findElement(By.css("td > a"))
@@ -52,7 +52,7 @@ app.get('/', function(req, res) {
         })
     })
     .then(_ => res.send(toReturn))
-    .then(_ => driver.quit())
+    // .then(_ => driver.quit())
     .then(_ => {
       var end = new Date().getTime();
       var time = end - start;
@@ -61,9 +61,10 @@ app.get('/', function(req, res) {
 });
 
 app.get('/page', function(req, res) {
-  driver.get(req.query.link);
+  driver.get(req.query.link)
+  .then(_ => driver.quit());
 });
 
 app.listen(8080, function() {
-  console.log('Example app listening on port 3000!');
+  console.log('Example app listening on port 8080!');
 });

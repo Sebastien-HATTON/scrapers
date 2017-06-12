@@ -5,11 +5,11 @@ app.get('/', function(req, res) {
   var webdriver = require('selenium-webdriver'),
     By = webdriver.By,
     until = webdriver.until;
-  let chrome = require('selenium-webdriver/chrome')
-  var opt = new chrome.Options;
+  // let chrome = require('selenium-webdriver/chrome')
+  // var opt = new chrome.Options;
   var driver = new webdriver.Builder()
     .forBrowser('chrome')
-    .setChromeOptions(opt.addArguments('load-extension=C:/Users/vicec/AppData/Local/Google/Chrome/User Data/Default/Extensions/pehaalcefcjfccdpbckoablngfkfgfgj/1.1_0'))
+    // .setChromeOptions(opt.addArguments('load-extension=C:/Users/vicec/AppData/Local/Google/Chrome/User Data/Default/Extensions/pehaalcefcjfccdpbckoablngfkfgfgj/1.1_0'))
     .build();
     // driver
   var toReturn = [];
