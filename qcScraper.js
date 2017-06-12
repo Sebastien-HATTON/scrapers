@@ -8,11 +8,8 @@ app.get('/', function(req, res) {
   var webdriver = require('selenium-webdriver'),
     By = webdriver.By,
     until = webdriver.until;
-  let chrome = require('selenium-webdriver/chrome')
-  var opt = new chrome.Options;
   var driver = new webdriver.Builder()
     .forBrowser('phantomjs')
-    .setChromeOptions(opt.addArguments('load-extension=C:/Users/vicec/AppData/Local/Google/Chrome/User Data/Default/Extensions/gighmmpiobklfepjocnamgkkbiglidom/3.10.0_0'))
     .build();
   var toReturn = [];
   var names = [];
