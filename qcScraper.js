@@ -24,7 +24,8 @@ app.get('/', function(req, res) {
       // driver.wait(until.elementIsEnabled(elem))
       driver.wait(until.stalenessOf(elem), 5000)
         .then(_ => {
-          driver.findElements(By.xpath("//*[@id='block-system-main']/div/div[3]/table/tbody/tr"))
+          //driver.findElements(By.xpath("//*[@id='block-system-main']/div/div[3]/table/tbody/tr"))
+          driver.findElements(By.xpath("//*[@id='block-system-main']/div/div[3]/table/tbody/tr/td[contains(text(), 'IGP') or contains(text(), 'DOP')]/.."))
             .then((elems) => {
               for (var i in elems) {
                 elems[i].findElement(By.css("td > a"))
@@ -61,8 +62,15 @@ app.get('/', function(req, res) {
 });
 
 app.get('/page', function(req, res) {
-  driver.get(req.query.link)
-  .then(_ => driver.quit());
+  request(req.query.link, function(error, response, body) {
+    console.log('error:', error); // Print the error if one occurred
+    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    var toReturn = {};
+    var cheerio = require('cheerio');
+    $ = cheerio.load(body);
+    res.send($("div#block-system-main div.region-inner.clearfix").html());
+
+  });
 });
 
 app.listen(8080, function() {
