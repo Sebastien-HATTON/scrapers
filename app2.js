@@ -1,5 +1,7 @@
 var express = require('express');
 var app = express();
+var cors = require('cors');
+app.use(cors());
 app.get('/', function(req, res) {
   var start = new Date().getTime();
   var webdriver = require('selenium-webdriver'),
@@ -67,10 +69,7 @@ app.get('/', function(req, res) {
       for (var i = 0; i < toReturn.length; i++)
         toReturn[i].img = imgs[i];
     })
-    .then(_ => {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.json(toReturn)
-    })
+    .then(_ => res.json(toReturn))
     .then(_ => driver.quit())
     .then(_ => {
       var end = new Date().getTime();
