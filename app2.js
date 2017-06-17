@@ -67,7 +67,10 @@ app.get('/', function(req, res) {
       for (var i = 0; i < toReturn.length; i++)
         toReturn[i].img = imgs[i];
     })
-    .then(_ => res.json(toReturn))
+    .then(_ => {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.json(toReturn)
+    })
     .then(_ => driver.quit())
     .then(_ => {
       var end = new Date().getTime();
