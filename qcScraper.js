@@ -71,7 +71,7 @@ app.get('/page', function(req, res) {
     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
     var cheerio = require('cheerio');
     $ = cheerio.load(body);
-    res.send($("div#block-system-main div.region-inner.clearfix").remove("h2.field-label").html());
+    res.send({body : $("div#block-system-main div.region-inner.clearfix").remove("h2.field-label").html()});
   });
 });
 
