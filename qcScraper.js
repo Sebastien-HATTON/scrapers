@@ -71,7 +71,10 @@ app.get('/page', function(req, res) {
     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
     var cheerio = require('cheerio');
     $ = cheerio.load(body);
-    res.send({body : $("div#block-system-main div.region-inner.clearfix").remove("h2.field-label").html()});
+    // res.send({body : $("div#block-system-main div.region-inner.clearfix").remove("h2.field-label").html()});
+    $("section.field.field-name-field-den-tipo.field-type-text.field-label-inline.clearfix.view-mode-full").remove();
+    res.send($("div#block-system-main div.region-inner.clearfix").html());
+    // res.send($("h2.field-label").remove().html());
   });
 });
 
