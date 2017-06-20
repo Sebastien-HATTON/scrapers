@@ -7,6 +7,7 @@ app.all('/*', function(req, res, next) {
   next();
 });
 app.get('/', function(req, res) {
+  var start = new Date().getTime();
   var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyD_9bj_Ao6nklX7PWrM_1E-iDH4EPVWV6A&location="
   +req.query.lat+","+req.query.lng+"&radius="+req.query.radius+"&type=restaurant";
   request(url, function(error, response, body) {
@@ -26,6 +27,9 @@ app.get('/', function(req, res) {
       }
     }
     res.send(toReturn);
+    var end = new Date().getTime();
+    var time = end - start;
+    console.log('Execution time: ' + time);
   })
 });
 
