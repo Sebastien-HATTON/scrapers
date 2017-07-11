@@ -33,6 +33,24 @@ app.get('/', function(req, res) {
   })
 });
 
-app.listen(8080, function() {
-  console.log('Example app listening on port 8080!');
+app.get('/descr', function(req, res) {
+  var url = "https://maps.googleapis.com/maps/api/place/details/json?key=AIzaSyD_9bj_Ao6nklX7PWrM_1E-iDH4EPVWV6A&placeid=" + req.query.placeid;
+  request(url, function(error, response, body) {
+    var info = JSON.parse(body).result;
+    var toReturn = {
+      lat: info.geometry.location.lat,
+      lng: info.geometry.location.lng,
+      phone: info.international_phone_number,
+      open_now: info.opening_hours.open_now,
+      opening_hours: info.opening_hours.weekday_text,
+      photos: info.photos,
+      reviews: info.reviews,
+      site: info.website
+    };
+    res.send(toReturn);
+  })
+})
+
+app.listen(8081, function() {
+  console.log('Example app listening on port 8081!');
 });
