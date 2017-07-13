@@ -1,5 +1,12 @@
 var express = require('express');
 const NodeCache = require("node-cache");
+var request = require('request');
+var webdriver = require('selenium-webdriver'),
+  By = webdriver.By,
+  until = webdriver.until;
+var driver = new webdriver.Builder()
+  .forBrowser('chrome')
+  .build();
 const myCache = new NodeCache();
 var app = express();
 app.all('/*', function(req, res, next) {
@@ -10,70 +17,92 @@ app.all('/*', function(req, res, next) {
 app.get('/', function(req, res) {
   var start = new Date().getTime();
   try {
-    value = myCache.get(req.query.loc, true);
+    value = myCache.get("data", true);
     res.json(value);
     var end = new Date().getTime();
     var time = end - start;
     console.log('Execution time: ' + time);
   } catch (err) {
-    var request = require('request');
-    var webdriver = require('selenium-webdriver'),
-      By = webdriver.By,
-      until = webdriver.until;
-    var driver = new webdriver.Builder()
-      .forBrowser('chrome')
-      .build();
-    var toReturn = [];
+    var toReturn = {};
     var names = [];
     var links = [];
-    driver.get('http://www.quattrocalici.it/ricerca/denominazioni')
-    driver.wait(until.elementLocated(By.id('edit-field-den-prov2-value')), 1000);
-    driver.findElement(By.id('edit-field-den-prov2-value')).sendKeys(req.query.loc);
-    driver.findElement(By.id('edit-submit-denominazioni')).click()
-    driver.findElement(By.id('edit-submit-denominazioni'))
-      .then((elem) => {
-        // driver.wait(until.elementIsDisabled(elem))
-        // driver.wait(until.elementIsEnabled(elem))
-        driver.wait(until.stalenessOf(elem), 5000)
-          .then(_ => {
-            //driver.findElements(By.xpath("//*[@id='block-system-main']/div/div[3]/table/tbody/tr"))
-            driver.findElements(By.xpath("//*[@id='block-system-main']/div/div[3]/table/tbody/tr/td[contains(text(), 'IGP') or contains(text(), 'DOP')]/.."))
-              .then((elems) => {
-                for (var i in elems) {
-                  elems[i].findElement(By.css("td > a"))
-                    .then((anchor) => {
-                      anchor.getText()
-                        .then((name) => names.push(name))
-                      anchor.getAttribute("href")
-                        .then((link) => links.push(link))
-                    })
-                }
+    driver.get('http://www.quattrocalici.it/ricerca/denominazioni');
+    driver.findElement(By.css('#td-outer-wrap > div.td-main-content-wrap.td-container-wrap > div > div.td-pb-row.body-content > div.td-pb-span8.td-main-content > div.wpb_raw_code.wpb_content_element.wpb_raw_html.vc_custom_1493908674521.wine-list > div > div.bootstrap-table > div.fixed-table-container > div.fixed-table-pagination > div.pull-left.pagination-detail > span.page-list > span > button'))
+      .then(element => {
+        driver.wait(until.elementIsVisible(element));
+        element.click();
+        driver.findElement(By.css('#td-outer-wrap > div.td-main-content-wrap.td-container-wrap > div > div.td-pb-row.body-content > div.td-pb-span8.td-main-content > div.wpb_raw_code.wpb_content_element.wpb_raw_html.vc_custom_1493908674521.wine-list > div > div.bootstrap-table > div.fixed-table-container > div.fixed-table-pagination > div.pull-left.pagination-detail > span.page-list > span > ul > li:nth-child(4) > a'))
+          .then(elem => {
+            driver.wait(until.elementIsVisible(elem));
+            elem.click();
+            driver.findElement(By.css('#td-outer-wrap > div.td-main-content-wrap.td-container-wrap > div > div.td-pb-row.body-content > div.td-pb-span8.td-main-content > div.wpb_raw_code.wpb_content_element.wpb_raw_html.vc_custom_1493908674521.wine-list > div > div.bootstrap-table > div.fixed-table-container > div.fixed-table-body > table > thead > tr > th:nth-child(3) > div.th-inner.sortable'))
+              .then(regione => {
+                tryClick(regione);
+                scrape();
+                console.log(toReturn)
+                myCache.set("data", toReturn);
+                // driver.quit();
               })
           })
-
       })
-      // driver.wait(until.elementsLocated(By.className('throbber')), 1000)
-      // driver.wait(until.stalenessOf(By.className('throbber')), 1000)
-      // driver.wait(until.elementIsDisabled(By.id('edit-submit-denominazioni')), 2000)
-      // driver.wait(until.elementIsEnabled(By.id('edit-submit-denominazioni')), 2000)
-      // driver.wait(until.stalenessOf(By.css('#views-exposed-form-denominazioni-denominazioni-ricerca > div > div > div > div.views-exposed-widget.views-submit-button > div > div')), 3000)
-      .then(_ => {
-        for (var i = 0; i < names.length; i++)
-          toReturn.push({
-            name: names[i],
-            link: links[i]
+
+    function scrape() {
+      driver.findElements(By.css('#td-outer-wrap > div.td-main-content-wrap.td-container-wrap > div > div.td-pb-row.body-content > div.td-pb-span8.td-main-content > div.wpb_raw_code.wpb_content_element.wpb_raw_html.vc_custom_1493908674521.wine-list > div > div.bootstrap-table > div.fixed-table-container > div.fixed-table-body > table > tbody > tr'))
+        .then(elems => {
+          for (var i in elems)
+            grabData(elems[i])
+          driver.findElement(By.css('#td-outer-wrap > div.td-main-content-wrap.td-container-wrap > div > div.td-pb-row.body-content > div.td-pb-span8.td-main-content > div.wpb_raw_code.wpb_content_element.wpb_raw_html.vc_custom_1493908674521.wine-list > div > div.bootstrap-table > div.fixed-table-container > div.fixed-table-pagination > div.pull-right.pagination > ul > li.page-next'))
+            .then(li => {
+              li.getAttribute("class")
+                .then(cl => {
+                  if (cl.indexOf("disabled") == -1) {
+                    li.findElement(By.css('a'))
+                      .then(anchor => {
+                        driver.wait(until.elementIsVisible(anchor));
+                        tryClick(anchor);
+                        scrape();
+                      })
+                  }
+                })
+            })
+
+        })
+    }
+
+    function tryClick(elem) {
+      elem.click()
+        .then(null, _ => {
+          driver.sleep(1000);
+          tryClick(elem)
+        })
+    }
+  }
+
+  function grabData(data) {
+    data.findElements(By.css('td'))
+      .then(fields => {
+        var p0 = fields[0].getText();
+        var p1 = fields[1].getText();
+        var p2 = fields[2].getText();
+        var p3 = fields[3].getText();
+        Promise.all([p0, p1, p2, p3])
+          .then(values => {
+            if (values[1] == "IGP" || values[1] == "DOP") {
+              var regioni = values[2].split(", ");
+              for (var i in regioni) {
+                var regione = regioni[i].toLowerCase();
+                if (toReturn[regione] === undefined)
+                  toReturn[regione] = [];
+                toReturn[regione].push({
+                  nome: values[0],
+                  tipologia: values[1],
+                  merceologia: values[3]
+                })
+              }
+            }
           })
       })
-      .then(_ => {
-        res.send(toReturn)
-        myCache.set(req.query.loc, toReturn);
-      })
-      // .then(_ => driver.quit())
-      .then(_ => {
-        var end = new Date().getTime();
-        var time = end - start;
-        console.log('Execution time: ' + time);
-      })
+      //console.log(toReturn.lombardia)
   }
 });
 
@@ -85,7 +114,9 @@ app.get('/page', function(req, res) {
     $ = cheerio.load(body);
     // res.send({body : $("div#block-system-main div.region-inner.clearfix").remove("h2.field-label").html()});
     $("section.field.field-label-inline.clearfix.view-mode-full").remove();
-    res.send({body: $("div#block-system-main div.region-inner.clearfix").html()});
+    res.send({
+      body: $("div#block-system-main div.region-inner.clearfix").html()
+    });
     // res.send($("div#block-system-main div.region-inner.clearfix").html());
     // res.send($("body").html());
     // res.send("porco dio");
