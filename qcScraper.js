@@ -119,15 +119,14 @@ app.get('/page', function(req, res) {
     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
     var cheerio = require('cheerio');
     $ = cheerio.load(body);
-    // res.send({body : $("div#block-system-main div.region-inner.clearfix").remove("h2.field-label").html()});
-    $("section.field.field-label-inline.clearfix.view-mode-full").remove();
+    $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div > div:nth-child(17) > div > div > div").remove();
+    $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div > div:nth-child(10) > div > div > div > div.wpb_raw_code.wpb_content_element.wpb_raw_html.policy-sheet").remove();
+    $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div > div.vc_row.wpb_row.vc_inner.td-pb-row.titling.vc_row-o-content-middle.vc_row-flex > div:nth-child(3)").remove();
+    $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div > div.vc_row.wpb_row.vc_inner.td-pb-row.titling.vc_row-o-content-middle.vc_row-flex > div:nth-child(1) > div > div").remove();
+    // res.send($("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div").html())
     res.send({
-      body: $("div#block-system-main div.region-inner.clearfix").html()
-    });
-    // res.send($("div#block-system-main div.region-inner.clearfix").html());
-    // res.send($("body").html());
-    // res.send("porco dio");
-    // res.send($("h2.field-label").remove().html());
+      body: $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div").html()
+    })
   });
 });
 
