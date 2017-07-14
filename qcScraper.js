@@ -5,7 +5,7 @@ var webdriver = require('selenium-webdriver'),
   By = webdriver.By,
   until = webdriver.until;
 var driver = new webdriver.Builder()
-  .forBrowser('chrome')
+  .forBrowser('phantomjs')
   .build();
 const myCache = new NodeCache();
 var app = express();
@@ -18,7 +18,7 @@ app.get('/', function(req, res) {
   var start = new Date().getTime();
   try {
     value = myCache.get("data", true);
-    res.json(value);
+    res.json(value[req.query.regione]);
     var end = new Date().getTime();
     var time = end - start;
     console.log('Execution time: ' + time);
@@ -30,18 +30,15 @@ app.get('/', function(req, res) {
     driver.findElement(By.css('#td-outer-wrap > div.td-main-content-wrap.td-container-wrap > div > div.td-pb-row.body-content > div.td-pb-span8.td-main-content > div.wpb_raw_code.wpb_content_element.wpb_raw_html.vc_custom_1493908674521.wine-list > div > div.bootstrap-table > div.fixed-table-container > div.fixed-table-pagination > div.pull-left.pagination-detail > span.page-list > span > button'))
       .then(element => {
         driver.wait(until.elementIsVisible(element));
-        element.click();
+        tryClick(element);
         driver.findElement(By.css('#td-outer-wrap > div.td-main-content-wrap.td-container-wrap > div > div.td-pb-row.body-content > div.td-pb-span8.td-main-content > div.wpb_raw_code.wpb_content_element.wpb_raw_html.vc_custom_1493908674521.wine-list > div > div.bootstrap-table > div.fixed-table-container > div.fixed-table-pagination > div.pull-left.pagination-detail > span.page-list > span > ul > li:nth-child(4) > a'))
           .then(elem => {
             driver.wait(until.elementIsVisible(elem));
-            elem.click();
+            tryClick(elem);
             driver.findElement(By.css('#td-outer-wrap > div.td-main-content-wrap.td-container-wrap > div > div.td-pb-row.body-content > div.td-pb-span8.td-main-content > div.wpb_raw_code.wpb_content_element.wpb_raw_html.vc_custom_1493908674521.wine-list > div > div.bootstrap-table > div.fixed-table-container > div.fixed-table-body > table > thead > tr > th:nth-child(3) > div.th-inner.sortable'))
               .then(regione => {
                 tryClick(regione);
                 scrape();
-                console.log(toReturn)
-                myCache.set("data", toReturn);
-                // driver.quit();
               })
           })
       })
@@ -62,6 +59,12 @@ app.get('/', function(req, res) {
                         tryClick(anchor);
                         scrape();
                       })
+                  } else {
+                    myCache.set("data", toReturn);
+                    driver.quit();
+                    var end = new Date().getTime();
+                    var time = end - start;
+                    console.log('Execution time: ' + time);
                   }
                 })
             })
@@ -85,16 +88,21 @@ app.get('/', function(req, res) {
         var p1 = fields[1].getText();
         var p2 = fields[2].getText();
         var p3 = fields[3].getText();
-        Promise.all([p0, p1, p2, p3])
+        var p4 = fields[0].findElement(By.css('a'))
+          .then(anchor => anchor.getAttribute("href"))
+        Promise.all([p0, p1, p2, p3, p4])
           .then(values => {
+            if (values[2] == "")
+              return;
             if (values[1] == "IGP" || values[1] == "DOP") {
               var regioni = values[2].split(", ");
               for (var i in regioni) {
-                var regione = regioni[i].toLowerCase();
+                var regione = regioni[i].toLowerCase().replace("-", " ");
                 if (toReturn[regione] === undefined)
                   toReturn[regione] = [];
                 toReturn[regione].push({
                   nome: values[0],
+                  link: values[4],
                   tipologia: values[1],
                   merceologia: values[3]
                 })
@@ -102,7 +110,6 @@ app.get('/', function(req, res) {
             }
           })
       })
-      //console.log(toReturn.lombardia)
   }
 });
 
