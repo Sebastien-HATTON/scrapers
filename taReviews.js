@@ -15,8 +15,9 @@ app.get('/', function(req, res) {
     .forBrowser('chrome')
     .build();
   var start = new Date().getTime();
-  var toReturn = [];
-  if (req.query.resId == undefined) {
+  var toReturn = {};
+  toReturn.reviews = []
+  if (req.query.risid == undefined) {
     driver.get('https://www.tripadvisor.it/Restaurants');
     driver.wait(until.elementsLocated(By.className('typeahead_input')), 3000);
     driver.findElement(By.className('typeahead_input')).sendKeys(req.query.ris + " " + req.query.citta);
@@ -24,12 +25,31 @@ app.get('/', function(req, res) {
     driver.wait(until.elementLocated(By.id('HEADING')), 10000)
       .then(driver.findElement(By.css("span.taLnk.ulBlueLinks")).click()
         .then(_ => {
+          getUrlData()
+          findReviews()
+        }, _ => {
+          getUrlData()
+          findReviews()
+        }))
+  } else {
+    driver.get('https://www.tripadvisor.it/Restaurant_Review-' + req.query.placeid
+    + '-' + req.query.risid + '-Reviews-or' + req.query.page + '0')
+    driver.wait(until.elementLocated(By.id('HEADING')), 10000)
+      .then(driver.findElement(By.css("span.taLnk.ulBlueLinks")).click()
+        .then(_ => {
           findReviews()
         }, _ => {
           findReviews()
         }))
-  } else {
+  }
 
+  function getUrlData() {
+    driver.getCurrentUrl()
+    .then(url => {
+      var urlData = url.split("-");
+      toReturn.placeId = urlData[1];
+      toReturn.risId = urlData[2];
+    })
   }
 
   function findReviews() {
@@ -63,7 +83,7 @@ app.get('/', function(req, res) {
     Promise.all([pUtente, pImg, pRating, pData, pTitle, pText])
       .then(values => {
         var r8 = values[2].split(" ")[1].split("_")[1].split("0")[0];
-        toReturn.push({
+        toReturn.reviews.push({
           utente: values[0],
           img: values[1],
           rating: r8,
