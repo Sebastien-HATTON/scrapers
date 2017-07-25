@@ -5,7 +5,7 @@ var webdriver = require('selenium-webdriver'),
   By = webdriver.By,
   until = webdriver.until;
 var driver = new webdriver.Builder()
-  .forBrowser('phantomjs')
+  .forBrowser('chrome')
   .build();
 const myCache = new NodeCache();
 var app = express();

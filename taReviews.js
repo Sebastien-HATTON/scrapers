@@ -22,7 +22,8 @@ app.get('/', function(req, res) {
     driver.wait(until.elementsLocated(By.className('typeahead_input')), 3000);
     driver.findElement(By.className('typeahead_input')).sendKeys(req.query.ris + " " + req.query.citta);
     driver.findElement(By.id('SUBMIT_RESTAURANTS')).click()
-    driver.wait(until.elementLocated(By.id('HEADING')), 10000)
+    driver.wait(until.elementLocated(By.id('HEADING')), 10000);
+    driver.wait(until.elementLocated(By.id('span.taLnk.ulBlueLinks')), 1000)
       .then(driver.findElement(By.css("span.taLnk.ulBlueLinks")).click()
         .then(_ => {
           getUrlData()
@@ -30,7 +31,10 @@ app.get('/', function(req, res) {
         }, _ => {
           getUrlData()
           findReviews()
-        }))
+        }), _ => {
+          getUrlData()
+          findReviews()
+        })
   } else {
     driver.get('https://www.tripadvisor.it/Restaurant_Review-' + req.query.placeid
     + '-' + req.query.risid + '-Reviews-or' + req.query.page + '0')
@@ -60,10 +64,10 @@ app.get('/', function(req, res) {
       })
       .then(_ => {
         res.json(toReturn)
-        driver.quit();
         var end = new Date().getTime();
         var time = end - start;
         console.log('Execution time: ' + time);
+        driver.quit();
       })
   }
 
