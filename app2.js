@@ -6,7 +6,7 @@ var webdriver = require('selenium-webdriver'),
   By = webdriver.By,
   until = webdriver.until;
 var driver = new webdriver.Builder()
-  .forBrowser('chrome')
+  .forBrowser('phantomjs')
   .build();
 // var cors = require('cors');
 //app.use(cors());

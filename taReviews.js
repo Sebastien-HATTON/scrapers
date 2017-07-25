@@ -12,7 +12,7 @@ app.all('/*', function(req, res, next) {
 
 app.get('/', function(req, res) {
   var driver = new webdriver.Builder()
-    .forBrowser('chrome')
+    .forBrowser('phantomjs')
     .build();
   var start = new Date().getTime();
   var toReturn = {};
