@@ -41,8 +41,8 @@ app.get('/descr', function(req, res) {
       lat: info.geometry.location.lat,
       lng: info.geometry.location.lng,
       phone: info.international_phone_number,
-      open_now: info.opening_hours.open_now,
-      opening_hours: info.opening_hours.weekday_text,
+      open_now: (info.opening_hours != undefined) ? info.opening_hours.open_now : null,
+      opening_hours: (info.opening_hours != undefined) ? info.opening_hours.weekday_text : null,
       photos: info.photos,
       reviews: info.reviews,
       site: info.website
