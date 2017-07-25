@@ -31,6 +31,25 @@ app.get('/', function(req, res) {
     console.log('Execution time: ' + time);
   })
 });
+app.get('/reverse', function(req, res) {
+  var start = new Date().getTime();
+  var url = "https://maps.googleapis.com/maps/api/geocode/json?language=it&key=AIzaSyDT2VctDWDuoC3xJjXFTslJJa5nGtAUkSQ&latlng=" + req.query.lat + "," + req.query.lng;
+  request(url, function(error, response, body) {
+    var data = JSON.parse(body).results[0];
+    var toReturn = {};
+    for(var i in data.address_components) {
+      if(data.address_components[i].short_name.length == 2) {
+        toReturn.provincia = data.address_components[i].long_name.split(" ").pop();
+        toReturn.regione = data.address_components[++i].long_name;
+        break;
+      }
+    }
+    res.send(toReturn);
+    var end = new Date().getTime();
+    var time = end - start;
+    console.log('Execution time: ' + time);
+  })
+});
 
 app.listen(8081, function() {
   console.log('Example app listening on port 8081!');

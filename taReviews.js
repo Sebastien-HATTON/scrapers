@@ -88,10 +88,10 @@ app.get('/', function(req, res) {
       .then(values => {
         var r8 = values[2].split(" ")[1].split("_")[1].split("0")[0];
         toReturn.reviews.push({
-          utente: values[0],
-          img: values[1],
+          author_name: values[0],
+          profile_photo_url: values[1],
           rating: r8,
-          data: values[3],
+          relative_time_description: values[3],
           title: values[4],
           text: values[5],
         })
@@ -99,6 +99,6 @@ app.get('/', function(req, res) {
   }
 })
 
-app.listen(8081, function() {
+app.listen(8083, function() {
   console.log('Example app listening on port 8081!');
 });

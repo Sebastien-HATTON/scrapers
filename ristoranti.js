@@ -34,7 +34,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/descr', function(req, res) {
-  var url = "https://maps.googleapis.com/maps/api/place/details/json?key=AIzaSyD_9bj_Ao6nklX7PWrM_1E-iDH4EPVWV6A&placeid=" + req.query.placeid;
+  var url = "https://maps.googleapis.com/maps/api/place/details/json?key=AIzaSyD_9bj_Ao6nklX7PWrM_1E-iDH4EPVWV6A&language=it&placeid=" + req.query.placeid;
   request(url, function(error, response, body) {
     var info = JSON.parse(body).result;
     var toReturn = {
@@ -51,6 +51,6 @@ app.get('/descr', function(req, res) {
   })
 })
 
-app.listen(8081, function() {
-  console.log('Example app listening on port 8081!');
+app.listen(8082, function() {
+  console.log('Example app listening on port 8082!');
 });
