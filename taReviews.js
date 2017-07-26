@@ -12,16 +12,15 @@ app.all('/*', function(req, res, next) {
 
 app.get('/', function(req, res) {
   var driver = new webdriver.Builder()
-    .forBrowser('phantomjs')
+    .forBrowser('chrome')
     .build();
   var start = new Date().getTime();
   var toReturn = {};
   toReturn.reviews = []
   if (req.query.risid == undefined) {
-    driver.get('https://www.tripadvisor.it/Restaurants');
-    driver.wait(until.elementsLocated(By.className('typeahead_input')), 3000);
-    driver.findElement(By.className('typeahead_input')).sendKeys(req.query.ris + " " + req.query.citta);
-    driver.findElement(By.id('SUBMIT_RESTAURANTS')).click()
+    driver.get("https://www.google.it/search?q=" + req.query.ris.replace(/ /g, "+") + "+" + req.query.citta.replace(/ /g, "+") + "+tripadvisor")
+    driver.wait(until.elementsLocated(By.css('#rso > div > div > div:nth-child(1) > div > div > h3 > a')), 4000);
+    driver.findElement(By.css("#rso > div > div > div:nth-child(1) > div > div > h3 > a")).click()
     driver.wait(until.elementLocated(By.id('HEADING')), 10000);
     driver.wait(until.elementLocated(By.id('span.taLnk.ulBlueLinks')), 1000)
       .then(driver.findElement(By.css("span.taLnk.ulBlueLinks")).click()
