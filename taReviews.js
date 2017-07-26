@@ -53,13 +53,19 @@ app.get('/', function(req, res) {
     var p1 = driver.getCurrentUrl()
     var p2 = driver.findElement(By.css("#taplc_location_reviews_list_0 > div.prw_rup.prw_common_north_star_pagination > div > span.nav.next"))
       .then(elem => elem.getAttribute("class"))
-    Promise.all([p1, p2])
-    .then(values => {
-      var urlData = values[0].split("-");
-      toReturn.placeId = urlData[1];
-      toReturn.risId = urlData[2];
-      toReturn.hasNext = values[1].indexOf("disabled") == -1;
-    })
+    var p3 = driver.findElement(By.css("#taplc_location_detail_overview_restaurant_0 > div.block_wrap > div.overviewContent > div.ui_columns.is-multiline.is-mobile.reviewsAndDetails > div.ui_column.is-6.reviews > div.rating > span"))
+      .then(elem => elem.getText())
+    var p4 = driver.findElement(By.css("#taplc_location_detail_overview_restaurant_0 > div.block_wrap > div.overviewContent > div.ui_columns.is-multiline.is-mobile.reviewsAndDetails > div.ui_column.is-6.reviews > div.rating > a"))
+      .then(elem => elem.getText())
+    Promise.all([p1, p2, p3, p4])
+      .then(values => {
+        var urlData = values[0].split("-");
+        toReturn.placeId = urlData[1];
+        toReturn.risId = urlData[2];
+        toReturn.hasNext = values[1].indexOf("disabled") == -1;
+        toReturn.avgRating = values[2].replace(",", ".");
+        toReturn.numReviews = values[3].split(" ")[0];
+      })
   }
 
   function findReviews() {
