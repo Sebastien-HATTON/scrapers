@@ -26,33 +26,39 @@ app.get('/', function(req, res) {
     driver.wait(until.elementLocated(By.id('span.taLnk.ulBlueLinks')), 1000)
       .then(driver.findElement(By.css("span.taLnk.ulBlueLinks")).click()
         .then(_ => {
-          getUrlData()
+          getData()
           findReviews()
         }, _ => {
-          getUrlData()
+          getData()
           findReviews()
         }), _ => {
-          getUrlData()
+          getData()
           findReviews()
         })
   } else {
-    driver.get('https://www.tripadvisor.it/Restaurant_Review-' + req.query.placeid
-    + '-' + req.query.risid + '-Reviews-or' + req.query.page + '0')
+    driver.get('https://www.tripadvisor.it/Restaurant_Review-' + req.query.placeid +
+      '-' + req.query.risid + '-Reviews-or' + req.query.page + '0')
     driver.wait(until.elementLocated(By.id('HEADING')), 10000)
       .then(driver.findElement(By.css("span.taLnk.ulBlueLinks")).click()
         .then(_ => {
+          getData()
           findReviews()
         }, _ => {
+          getData()
           findReviews()
         }))
   }
 
-  function getUrlData() {
-    driver.getCurrentUrl()
-    .then(url => {
-      var urlData = url.split("-");
+  function getData() {
+    var p1 = driver.getCurrentUrl()
+    var p2 = driver.findElement(By.css("#taplc_location_reviews_list_0 > div.prw_rup.prw_common_north_star_pagination > div > span.nav.next"))
+      .then(elem => elem.getAttribute("class"))
+    Promise.all([p1, p2])
+    .then(values => {
+      var urlData = values[0].split("-");
       toReturn.placeId = urlData[1];
       toReturn.risId = urlData[2];
+      toReturn.hasNext = values[1].indexOf("disabled") == -1;
     })
   }
 
@@ -100,5 +106,5 @@ app.get('/', function(req, res) {
 })
 
 app.listen(8083, function() {
-  console.log('Example app listening on port 8081!');
+  console.log('Example app listening on port 8083!');
 });
