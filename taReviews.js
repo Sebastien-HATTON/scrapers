@@ -19,8 +19,8 @@ app.get('/', function(req, res) {
   toReturn.reviews = []
   if (req.query.risid == undefined) {
     driver.get("https://www.google.it/search?q=" + req.query.ris.replace(/ /g, "+") + "+" + req.query.citta.replace(/ /g, "+") + "+tripadvisor")
-    driver.wait(until.elementsLocated(By.css('#rso > div > div > div:nth-child(1) > div > div > h3 > a')), 4000);
-    driver.findElement(By.css("#rso > div > div > div:nth-child(1) > div > div > h3 > a")).click()
+    driver.wait(until.elementsLocated(By.css('div#ires h3 a:nth-child(1)')), 6000);
+    driver.findElement(By.css("div#ires h3 a:nth-child(1)")).click()
     driver.wait(until.elementLocated(By.id('HEADING')), 10000);
     driver.wait(until.elementLocated(By.id('span.taLnk.ulBlueLinks')), 1000)
       .then(driver.findElement(By.css("span.taLnk.ulBlueLinks")).click()
