@@ -8,7 +8,7 @@ app.all('/*', function(req, res, next) {
 });
 app.get('/', function(req, res) {
   var start = new Date().getTime();
-  var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyD_9bj_Ao6nklX7PWrM_1E-iDH4EPVWV6A&location="
+  var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyD_9bj_Ao6nklX7PWrM_1E-iDH4EPVWV6A&language=it&location="
   +req.query.lat+","+req.query.lng+"&radius="+req.query.radius+"&type=restaurant";
   request(url, function(error, response, body) {
     //res.send(body.json().results);
