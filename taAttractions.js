@@ -22,7 +22,9 @@ app.get('/', function(req, res) {
   driver.findElement(By.className('typeahead_input')).sendKeys(req.query.loc);
   driver.findElement(By.id('SUBMIT_THINGS_TO_DO')).click();
   driver.wait(until.elementLocated(By.id('HEADING')), 8000)
+  // driver.wait(until.stalenessOf(driver.findElement(By.css("img[src='https://static.tacdn.com/img2/x.gif']"))))
     .then(_ => {
+      driver.sleep(1000)
       //"//div[@class='listing_details' and not(div[@class='photo_booking']//div[@class='noImageBorder']//img[@class='npp'])]"
       //"//div[@class='listing_details' and not(div[@class='photo_booking']//div[@class='noImageBorder']//img[@class='npp']) and div[@class='listing_info']/div[@class='tag_line']/div/a]"
       driver.findElements(By.xpath("//div[@class='listing_details' and not(div[@class='photo_booking']//div[@class='noImageBorder']//img[@class='npp']) and div[@class='listing_info']/div[@class='tag_line']/div/a]"))
