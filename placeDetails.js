@@ -18,9 +18,11 @@ app.get('/', function(req, res) {
       lat: data.geometry.location.lat,
       lng: data.geometry.location.lng
     };
+    var re = new RegExp("[A-Z][A-Z]");
     for(var i in data.address_components) {
-      if(data.address_components[i].short_name.length == 2) {
-        toReturn.provincia = data.address_components[i].long_name.split(" ").pop();
+      if(re.test(data.address_components[i].short_name)) {
+        toReturn.citta = data.address_components[--i].long_name;
+        toReturn.provincia = data.address_components[++i].long_name.split(" ").pop();
         toReturn.regione = data.address_components[++i].long_name;
         break;
       }
