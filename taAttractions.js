@@ -23,14 +23,21 @@ app.get('/', function(req, res) {
     driver.wait(until.elementsLocated(By.className('typeahead_input')), 3000);
     driver.findElement(By.className('typeahead_input')).sendKeys(req.query.loc);
     driver.findElement(By.id('SUBMIT_THINGS_TO_DO')).click();
-  }
-  else
+  } else
     driver.get('https://www.tripadvisor.it/Attractions-' + req.query.placeid + "-Activities-oa" + req.query.page)
   driver.wait(until.elementLocated(By.id('HEADING')), 8000)
     .then(_ => {
       driver.sleep(1000)
       driver.getCurrentUrl()
-      .then(url => toReturn.placeid = url.split("-")[1])
+        .then(url => toReturn.placeid = url.split("-")[1])
+      driver.findElement(By.css(".next"))
+        .then(elem => {
+          elem.getAttribute("class")
+            .then(cl => toReturn.hasNext = cl.indexOf("disabled") == -1)
+        })
+        .catch(_ => {
+          toReturn.hasNext = false;
+        })
       driver.findElements(By.xpath("//div[@class='listing_details' and not(div[@class='photo_booking']//div[@class='noImageBorder']//img[@class='npp']) and div[@class='listing_info']/div[@class='tag_line']/div/a]"))
         .then(elements => {
           for (var i in elements) {
