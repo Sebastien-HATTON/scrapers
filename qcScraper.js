@@ -16,7 +16,7 @@ app.get('/', function(req, res) {
   var start = new Date().getTime();
   try {
     value = myCache.get("data", true);
-    res.json(value[req.query.regione]);
+    res.send(value[req.query.regione]);
     var end = new Date().getTime();
     var time = end - start;
     console.log('Execution time: ' + time);
