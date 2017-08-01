@@ -4,9 +4,6 @@ var request = require('request');
 var webdriver = require('selenium-webdriver'),
   By = webdriver.By,
   until = webdriver.until;
-var driver = new webdriver.Builder()
-  .forBrowser('phantomjs')
-  .build();
 const myCache = new NodeCache();
 var app = express();
 app.all('/*', function(req, res, next) {
@@ -23,6 +20,9 @@ app.get('/', function(req, res) {
     var time = end - start;
     console.log('Execution time: ' + time);
   } catch (err) {
+    var driver = new webdriver.Builder()
+      .forBrowser('phantomjs')
+      .build();
     var toReturn = {};
     var names = [];
     var links = [];
