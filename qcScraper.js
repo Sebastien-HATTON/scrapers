@@ -6,6 +6,7 @@ var webdriver = require('selenium-webdriver'),
   until = webdriver.until;
 const myCache = new NodeCache();
 var app = express();
+var isComputing = false;
 init();
 app.all('/*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -21,11 +22,15 @@ app.get('/', function(req, res) {
     var time = end - start;
     console.log('Execution time: ' + time);
   } catch (err) {
-    init();
+    if(!isComputing)
+      init();
+    else
+      res.status(500).send('Servizio non disponibile!');
   }
 });
 
 function init() {
+  isComputing = true;
   var start = new Date().getTime();
   var driver = new webdriver.Builder()
     .forBrowser('phantomjs')
@@ -69,6 +74,7 @@ function init() {
                 } else {
                   myCache.set("data", toReturn);
                   driver.quit();
+                  isComputing = false;
                   var end = new Date().getTime();
                   var time = end - start;
                   console.log('Execution time: ' + time);

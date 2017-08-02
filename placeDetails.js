@@ -44,7 +44,7 @@ app.get('/reverse', function(req, res) {
       if(re.test(data.address_components[i].short_name)) {
         toReturn.citta = data.address_components[--i].long_name;
         toReturn.provincia = data.address_components[++i].long_name.split(" -")[0].split(" ").pop();
-        toReturn.regione = data.address_components[++i].long_name.replace(/-/g, " ");
+        toReturn.regione = data.address_components[++i].long_name.replace(/-/g, " ").toLowerCase();
         break;
       }
     }
