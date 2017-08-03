@@ -109,7 +109,7 @@ function init() {
             if (values[1] == "IGP" || values[1] == "DOP") {
               var regioni = values[2].split(", ");
               for (var i in regioni) {
-                var regione = regioni[i].toLowerCase().replace("-", " ");
+                var regione = regioni[i].toLowerCase().replace("-", " ").replace("’", " ");
                 if (toReturn[regione] === undefined)
                   toReturn[regione] = [];
                 toReturn[regione].push({
@@ -137,7 +137,7 @@ app.get('/page', function(req, res) {
     $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div > div.vc_row.wpb_row.vc_inner.td-pb-row.titling.vc_row-o-content-middle.vc_row-flex > div:nth-child(1) > div > div").remove();
     // res.send($("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div").html())
     res.send({
-      body: $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div").html()
+      body: $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div").html().replace(/Provincie/g, "Province")
     })
   });
 });

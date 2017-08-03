@@ -16,13 +16,20 @@ app.get('/', function(req, res) {
       lat: data.geometry.location.lat,
       lng: data.geometry.location.lng
     };
-    for (var i in data.address_components) {
-      if (data.address_components[i].long_name.indexOf("Provincia") != -1 ||
-        data.address_components[i].long_name.indexOf("Metropolitana") != -1) {
-        toReturn.citta = data.address_components[--i].long_name;
-        toReturn.provincia = data.address_components[++i].long_name.split(" ").pop();
-        toReturn.regione = data.address_components[++i].long_name;
-        break;
+    var addrComp = data.address_components;
+    for (var i in addrComp) {
+      switch (addrComp[i].types[0]) {
+        case "administrative_area_level_3":
+          toReturn.citta = addrComp[i].long_name;
+          break;
+        case "administrative_area_level_2":
+          toReturn.provincia = addrComp[i].long_name.split(" -")[0].split(" ").pop();
+          break;
+        case "administrative_area_level_1":
+          toReturn.regione = addrComp[i].long_name.replace(/-/g, " ").replace("'", " ").toLowerCase();;
+          break;
+        default:
+          break;
       }
     }
     res.send(toReturn);
@@ -37,13 +44,20 @@ app.get('/reverse', function(req, res) {
   request(url, function(error, response, body) {
     var data = JSON.parse(body).results[0];
     var toReturn = {};
-    var re = new RegExp("[A-Z][A-Z]");
-    for (var i in data.address_components) {
-      if (re.test(data.address_components[i].short_name)) {
-        toReturn.citta = data.address_components[--i].long_name;
-        toReturn.provincia = data.address_components[++i].long_name.split(" -")[0].split(" ").pop();
-        toReturn.regione = data.address_components[++i].long_name.replace(/-/g, " ").toLowerCase();
-        break;
+    var addrComp = data.address_components;
+    for (var i in addrComp) {
+      switch (addrComp[i].types[0]) {
+        case "administrative_area_level_3":
+          toReturn.citta = addrComp[i].long_name;
+          break;
+        case "administrative_area_level_2":
+          toReturn.provincia = addrComp[i].long_name.split(" -")[0].split(" ").pop();
+          break;
+        case "administrative_area_level_1":
+          toReturn.regione = addrComp[i].long_name.replace(/-/g, " ").replace("'", " ").toLowerCase();;
+          break;
+        default:
+          break;
       }
     }
     res.send(toReturn);
