@@ -13,14 +13,12 @@ app.get('/', function(req, res) {
     var data = JSON.parse(body).result;
     console.log(data.address_components.length)
     var toReturn = {
-      // provincia: (data.address_components.length == 6) ? data.address_components[2].long_name.split(" ").pop() : data.address_components[1].long_name.split(" ").pop(),
-      // regione: (data.address_components.length == 6) ? data.address_components[3].long_name : data.address_components[2].long_name,
       lat: data.geometry.location.lat,
       lng: data.geometry.location.lng
     };
-    var re = new RegExp("[A-Z][A-Z]");
-    for(var i in data.address_components) {
-      if(re.test(data.address_components[i].short_name)) {
+    for (var i in data.address_components) {
+      if (data.address_components[i].long_name.indexOf("Provincia") != -1 ||
+        data.address_components[i].long_name.indexOf("Metropolitana") != -1) {
         toReturn.citta = data.address_components[--i].long_name;
         toReturn.provincia = data.address_components[++i].long_name.split(" ").pop();
         toReturn.regione = data.address_components[++i].long_name;
@@ -40,8 +38,8 @@ app.get('/reverse', function(req, res) {
     var data = JSON.parse(body).results[0];
     var toReturn = {};
     var re = new RegExp("[A-Z][A-Z]");
-    for(var i in data.address_components) {
-      if(re.test(data.address_components[i].short_name)) {
+    for (var i in data.address_components) {
+      if (re.test(data.address_components[i].short_name)) {
         toReturn.citta = data.address_components[--i].long_name;
         toReturn.provincia = data.address_components[++i].long_name.split(" -")[0].split(" ").pop();
         toReturn.regione = data.address_components[++i].long_name.replace(/-/g, " ").toLowerCase();
