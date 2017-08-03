@@ -27,7 +27,7 @@ app.get('/', function(req, res) {
     driver.get('https://www.tripadvisor.it/Attractions-' + req.query.placeid + "-Activities-oa" + req.query.page)
   driver.wait(until.elementLocated(By.id('HEADING')), 8000)
     .then(_ => {
-      driver.sleep(1000)
+      driver.sleep(2000)
       driver.getCurrentUrl()
         .then(url => toReturn.placeid = url.split("-")[1])
       driver.findElement(By.css(".next"))
