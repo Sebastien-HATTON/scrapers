@@ -52,7 +52,7 @@ app.get('/', function(req, res) {
     driver.getCurrentUrl()
       .then(url => {
         if (url.indexOf("ShowUserReviews") != -1) {
-          res.send("error");
+          res.json("no data");
           var end = new Date().getTime();
           var time = end - start;
           console.log('Execution time: ' + time);
