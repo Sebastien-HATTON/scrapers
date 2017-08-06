@@ -51,13 +51,8 @@ app.get('/', function(req, res) {
   function getData() {
     driver.getCurrentUrl()
       .then(url => {
-        if (url.indexOf("ShowUserReviews") != -1) {
-          res.json("no data");
-          var end = new Date().getTime();
-          var time = end - start;
-          console.log('Execution time: ' + time);
-          driver.quit();
-        }
+        if (url.indexOf("ShowUserReviews") != -1)
+          sendError()
       })
     var p1 = driver.getCurrentUrl()
     var p2 = driver.findElement(By.css("#taplc_location_detail_overview_restaurant_0 > div.block_wrap > div.overviewContent > div.ui_columns.is-multiline.is-mobile.reviewsAndDetails > div.ui_column.is-6.reviews > div.rating > span"))
@@ -75,6 +70,7 @@ app.get('/', function(req, res) {
             toReturn.avgRating = values[1].replace(",", ".");
             toReturn.numReviews = values[2].split(" ")[0];
           })
+          .catch(_ => sendError())
       }))
       .catch(_ => {
         toReturn.hasNext = false;
@@ -86,6 +82,7 @@ app.get('/', function(req, res) {
             toReturn.avgRating = values[1].replace(",", ".");
             toReturn.numReviews = values[2].split(" ")[0];
           })
+          .catch(_ => sendError())
       })
   }
 
@@ -129,6 +126,14 @@ app.get('/', function(req, res) {
           text: values[5],
         })
       })
+  }
+
+  function sendError() {
+    res.json("no data");
+    var end = new Date().getTime();
+    var time = end - start;
+    console.log('Execution time: ' + time);
+    driver.quit();
   }
 })
 
