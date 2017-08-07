@@ -135,6 +135,7 @@ app.get('/page', function(req, res) {
     $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div > div:nth-child(10) > div > div > div > div.wpb_raw_code.wpb_content_element.wpb_raw_html.policy-sheet").remove();
     $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div > div.vc_row.wpb_row.vc_inner.td-pb-row.titling.vc_row-o-content-middle.vc_row-flex > div:nth-child(3)").remove();
     $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div > div.vc_row.wpb_row.vc_inner.td-pb-row.titling.vc_row-o-content-middle.vc_row-flex > div:nth-child(1) > div > div").remove();
+    $("h2.vc_custom_heading").remove();
     // res.send($("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div").html())
     res.send({
       body: $("#td-outer-wrap > div.td-main-content-wrap.td-main-page-wrap.td-container-wrap > div > div:nth-child(2) > div.wpb_column.vc_column_container.td-pb-span8 > div > div").html().replace(/Provincie/g, "Province")
