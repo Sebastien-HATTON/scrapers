@@ -57,8 +57,10 @@ app.get('/', function(req, res) {
     var p1 = driver.getCurrentUrl()
     var p2 = driver.findElement(By.css("#taplc_location_detail_overview_restaurant_0 > div.block_wrap > div.overviewContent > div.ui_columns.is-multiline.is-mobile.reviewsAndDetails > div.ui_column.is-6.reviews > div.rating > span"))
       .then(elem => elem.getText())
+      .catch(_ => {})
     var p3 = driver.findElement(By.css("#taplc_location_detail_overview_restaurant_0 > div.block_wrap > div.overviewContent > div.ui_columns.is-multiline.is-mobile.reviewsAndDetails > div.ui_column.is-6.reviews > div.rating > a"))
       .then(elem => elem.getText())
+      .catch(_ => {})
     driver.findElement(By.css("#taplc_location_reviews_list_0 > div.prw_rup.prw_common_north_star_pagination > div > span.nav.next"))
       .then(elem => elem.getAttribute("class").then(cl => {
         Promise.all([p1, p2, p3])
