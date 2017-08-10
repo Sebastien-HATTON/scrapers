@@ -19,10 +19,10 @@ app.get('/sagre', function (req, res) {
     $('div.flag').remove();
     recensioni = $('div.row.recensione, div.row.segnalato, div.row.normale').parent()
     var image= []
-    console.log($('div.col.col1 > img').length)
+
 
     $('div.col.col1 > img').each(function(i,elem){//va bene
-      console.log($(this).attr('src'))
+      console.log("salve")
       image.push($(this).attr('src'));
     })//22
 
@@ -38,23 +38,18 @@ app.get('/sagre', function (req, res) {
       var img = $(this).find('div.col.col1 > img').attr('src');
       var name = $(this).find('div.col.col2 > p').text();
       var date = $(this).find('div.col.col3').text();
+      date = date.substring(0,date.length-5)
       var country = $(this).find('div.col.col4').text().replace(/^\s+|\s+$/gm, '');
       var region = $(this).find('div.col.col5').text().replace(/^\s+|\s+$/gm, '');
-      //console.log(img + " "+ name + " " + date + " " + country + " " + region )
       json.push({
           img : img,
           name : name,
           href : href,
+          date : date,
           country : country
           //"limit" : limit
       })
 });
-
-    /*recensioni.each(function(i,elem){//va bene
-      var test = $(this).attr('href')
-      url_sagre.push(test);
-    //  $(this).replaceWith('<span>'+test+'</span>')
-  })*/
 
   $('a').each(function(i,elem){
 
@@ -62,22 +57,13 @@ app.get('/sagre', function (req, res) {
       $(this).removeAttr('title');
 
 })
-
-/*    var sagre = $('div.container').html();
-
-
-    json.push({
-        "sagre" : sagre,
-        "url_sagre" : url_sagre,
-        "url_image" : url_image
-    })*/
 }
 res.send(json)
 })
 
-})//6
+})
 
-//})
+
 
 app.get('/desc', function (req, res) {
    url = req.query.desc_sagre;
@@ -86,7 +72,7 @@ var json = []
 
   if(!error && response.statusCode == 200){
     $ = cheerio.load(body);
-  //  #centrale > div.search_results > div > div.container > a:nth-child(2) > div
+
 
   $('a').each(function(i,elem){
     var test = $(this).text()
@@ -101,7 +87,7 @@ var json = []
 json.push({
     "desc_sagre" : desc_sagre
 })
-  //  send(json)
+
  }
  res.send(desc_sagre)
 })
@@ -111,17 +97,3 @@ json.push({
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 })
-
-
-
-
-
-
-    /*  if($(this).hasClass('image')){
-
-          url_image.push($(this).attr('src'))
-      }*/
-    //  console.log(url_image);
-    /*  var test = $(this).text()
-        $(this).replaceWith(test)*/
-  //  send(json)
