@@ -42,7 +42,7 @@ app.get('/placedetrev', function(req, res) {
 
 app.get('/qc', function(req, res) {
   // res.redirect(myIp + ':8084/');
-  res.send(myCache.get("data", true))[req.query.regione];
+  res.send(myCache.get("data", true)[req.query.regione]);
 })
 
 app.get('/qcpage', function(req, res) {
