@@ -22,7 +22,7 @@ request('http://169.254.169.254/latest/meta-data/public-hostname', function(erro
       if (!error && response.statusCode == 200) {
         console.log('it worked!')
       } else {
-        console.log('error')
+        console.log(error)
       }
     })
   }
