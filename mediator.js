@@ -18,7 +18,6 @@ request('http://169.254.169.254/latest/meta-data/public-hostname', function(erro
     request(myIp + ':8084', function(error, response, body) {
       if (!error && response.statusCode == 200) {
         myCache.set("data", body);
-        console.log('data set');
       } else
         console.log(error)
     })
@@ -43,7 +42,7 @@ app.get('/placedetrev', function(req, res) {
 
 app.get('/qc', function(req, res) {
   // res.redirect(myIp + ':8084/');
-  res.json(myCache.get("data", true)[req.query.regione]);
+  res.send(JSON.parse(myCache.get("data", true))[req.query.regione]);
 })
 
 app.get('/qcpage', function(req, res) {
