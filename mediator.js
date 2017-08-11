@@ -16,7 +16,7 @@ request('http://169.254.169.254/latest/meta-data/public-hostname', function(erro
     myIp = 'http://' + body;
     var options = {
       url: myIp + ':8084',
-      timeout: 200000
+      timeout: 2000000
     }
     request(options, function(error, response, body) {
       if (!error && response.statusCode == 200) {
