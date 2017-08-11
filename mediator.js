@@ -2,12 +2,13 @@ var express = require('express');
 var request = require('request');
 var app = express();
 
+var myIp;
 request('http://169.254.169.254/latest/meta-data/public-hostname', function(error, response, body) {
   if (!error && response.statusCode == 200) {
     console.log('http://' + body)
+    myIp = 'http://' + body;
   }
 })
-// var myIp = 'http://ec2-52-36-14-51.us-west-2.compute.amazonaws.com';
 
 app.get('/ris', function(req, res) {
   res.redirect(myIp + ':8082?lat=' + req.query.lat + '&lng=' + req.query.lng + '&radius=' + req.query.radius);
