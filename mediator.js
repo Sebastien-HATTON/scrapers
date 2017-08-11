@@ -18,6 +18,7 @@ request('http://169.254.169.254/latest/meta-data/public-hostname', function(erro
     request(myIp, function(error, response, body) {
       if (!error && response.statusCode == 200) {
         myCache.set("data", body);
+        console.log('data set');
       } else
         console.log(error)
     })
