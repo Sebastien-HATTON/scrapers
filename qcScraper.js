@@ -1,21 +1,35 @@
 var express = require('express');
+const NodeCache = require("node-cache");
 var request = require('request');
 var webdriver = require('selenium-webdriver'),
   By = webdriver.By,
   until = webdriver.until;
+const myCache = new NodeCache();
 var app = express();
-
+var isComputing = false;
+init();
 app.all('/*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
   next();
 });
-
 app.get('/', function(req, res) {
-  init();
+  var start = new Date().getTime();
+  try {
+    res.send(myCache.get("data", true));
+    var end = new Date().getTime();
+    var time = end - start;
+    console.log('Execution time: ' + time);
+  } catch (err) {
+    if (!isComputing)
+      init();
+    else
+      res.status(500).send('Servizio non disponibile!');
+  }
 });
 
 function init() {
+  isComputing = true;
   var start = new Date().getTime();
   var driver = new webdriver.Builder()
     .forBrowser('phantomjs')
@@ -57,8 +71,9 @@ function init() {
                       scrape();
                     })
                 } else {
-                  res.send(toReturn);
+                  myCache.set("data", toReturn);
                   driver.quit();
+                  isComputing = false;
                   var end = new Date().getTime();
                   var time = end - start;
                   console.log('Execution time: ' + time);

@@ -1,6 +1,7 @@
 var express = require('express');
 var request = require('request');
-
+const NodeCache = require( "node-cache" );
+const myCache = new NodeCache();
 var app = express();
 
 app.all('/*', function(req, res, next) {
@@ -14,16 +15,11 @@ request('http://169.254.169.254/latest/meta-data/public-hostname', function(erro
   if (!error && response.statusCode == 200) {
     console.log('http://' + body)
     myIp = 'http://' + body;
-    var options = {
-      url: myIp + ':8084',
-      timeout: 2000000
-    }
-    request(options, function(error, response, body) {
+    request(myIp, function(error, response, body) {
       if (!error && response.statusCode == 200) {
-        console.log('it worked!')
-      } else {
+        myCache.set("data", body);
+      } else
         console.log(error)
-      }
     })
   }
 })
@@ -45,7 +41,8 @@ app.get('/placedetrev', function(req, res) {
 })
 
 app.get('/qc', function(req, res) {
-  res.redirect(myIp + ':8084/');
+  // res.redirect(myIp + ':8084/');
+  res.send(myCache.get("data", true))[req.query.regione];
 })
 
 app.get('/qcpage', function(req, res) {
