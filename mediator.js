@@ -2,9 +2,9 @@ var express = require('express');
 var request = require('request');
 var app = express();
 
-request('http://169.254.169.254/latest/meta-data/public-ipv4', function(error, response, body) {
+request('http://169.254.169.254/latest/meta-data/public-hostname', function(error, response, body) {
   if (!error && response.statusCode == 200) {
-    console.log(body)
+    console.log('http://' + body)
   }
 })
 // var myIp = 'http://ec2-52-36-14-51.us-west-2.compute.amazonaws.com';
