@@ -14,11 +14,14 @@ request('http://169.254.169.254/latest/meta-data/public-hostname', function(erro
   if (!error && response.statusCode == 200) {
     console.log('http://' + body)
     myIp = 'http://' + body;
-    request(myIp + ':8084', function(error, response, body) {
-      if(!error && response.statusCode == 200) {
+    var options = {
+      url: myIp + ':8084',
+      timeout: 200000
+    }
+    request(options, function(error, response, body) {
+      if (!error && response.statusCode == 200) {
         console.log('it worked!')
-      }
-      else {
+      } else {
         console.log('error')
       }
     })
