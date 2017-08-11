@@ -1,5 +1,6 @@
 var express = require('express');
 var request = require('request');
+
 var app = express();
 
 app.all('/*', function(req, res, next) {
@@ -13,6 +14,14 @@ request('http://169.254.169.254/latest/meta-data/public-hostname', function(erro
   if (!error && response.statusCode == 200) {
     console.log('http://' + body)
     myIp = 'http://' + body;
+    request(myIp + ':8084', function(error, response, body) {
+      if(!error && response.statusCode == 200) {
+        console.log('it worked!')
+      }
+      else {
+        console.log('error')
+      }
+    })
   }
 })
 
