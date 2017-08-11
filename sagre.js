@@ -3,6 +3,12 @@ var cheerio = require('cheerio');
 var request = require('request');
 var app = express();
 
+app.all('/*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
+
 app.get('/sagre', function (req, res) {
   url = 'http://www.sagreneiborghi.it/cerca/regione-'+req.query.regione+'/provincia-di-'+req.query.provincia+'/mese-di-'+req.query.mese+'/page/'+req.query.num+'/';
   console.log(url)

@@ -3,6 +3,11 @@ var cheerio = require('cheerio');
 var request = require('request');
 var app = express();
 
+app.all('/*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
 
 app.get('/descr', function (req, res) {
    url = req.query.url;
@@ -19,13 +24,14 @@ var json = []
       $(this).replaceWith(test)
 })
 
-        $('html').find('a.banda_iz_sapevate_che').remove()
+    $('html').find('a.banda_iz_sapevate_che').remove()
     var sapevate =$('div.sapevate_che').html()
+    if(sapevate != null)
     sapevate = sapevate.replace("promosso da Italia Zuccheri, 100% zucchero italiano","")
-    console.log(sapevate)
+
     $('body').find('div.sapevate_che').remove()
     $('body').find('h3.date').remove()
-      $('#invia_salva').remove()
+    $('#invia_salva').remove()
     $('div.indicative').remove()
 
     var desc_sagre = $('html').find('#content_centrale').html();

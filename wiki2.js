@@ -6,15 +6,21 @@ var app = express();
 var json =[]
 const myCache = new NodeCache();
 
+app.all('/*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
+
 app.get('/wiki', function (req, res) {
 
-  var ciccio = replaceAll(req.query.attr,' ','+')
 
-   var url = 'https://www.google.it/search?q='+ ciccio +'+'+req.query.loc + "+wikipedia";
+
+   var url = 'https://www.google.it/search?q='+  replaceAll(req.query.attr,' ','+') +'+'+req.query.loc + "+wikipedia";
 
    var attr = req.query.attr
       url=replaceAll(url,"’",'%27')
-   console.log(url);
+
   request(url,function(error,response, body){
     json = []
 
@@ -22,7 +28,7 @@ app.get('/wiki', function (req, res) {
         $ = cheerio.load(body);
         var google = false
         var primo = $('h3.r').first()
-        console.log( $('html').find($('h3.r')).length)
+
         var risul = $('html').find($('h3.r'))
         href=  primo.html()
         href = href.split('&amp')[0];
@@ -33,22 +39,20 @@ app.get('/wiki', function (req, res) {
         href = replaceAll(href,'%25C3%25B2','ò')
         href = replaceAll(href,'%25C3%25A0','à')
 
-        console.log("href= "+href)
+
         if(href.includes("it.wikipedia.org")){
           var attr = href.split("/wiki/")[1]
           var attr2 = req.query.attr
           attr2 =replaceAll(attr2," ","_")
 
-            console.log("attr "+attr + " attr " + req.query.attr)
-                    console.log(similarity(attr,attr2))
-                    var name = req.query.loc
-                     name = name[0].toUpperCase() + name.substring(1)
-            if(similarity(attr2,attr) < 0.55 && attr !=name && !  attr.includes(name)){
+          var name = req.query.loc
+          name = name[0].toUpperCase() + name.substring(1)
+          if(similarity(attr2,attr) < 0.55 && attr !=name && !  attr.includes(name)){
               json.push({
                   attr : "<span class =\"assente\">descrizione non disponibile</span>"
               })
               res.send(json)
-            }
+          }
 
         }
         else{
@@ -58,20 +62,14 @@ app.get('/wiki', function (req, res) {
           res.send(json)
         }
         request(href,function(error,response, body){
-        consenso = false
 
         if(!error && response.statusCode == 200 && json.length < 1){
           var name = req.query.loc
-           name = name[0].toUpperCase() + name.substring(1)
-           var $ = cheerio.load(body);
-           var localita = $('html').text().toLowerCase().includes(req.query.loc)
-           console.log(localita);
+          name = name[0].toUpperCase() + name.substring(1)
+          var $ = cheerio.load(body);
+          var localita = $('html').text().toLowerCase().includes(req.query.loc)
           if(href == 'https://it.wikipedia.org/wiki/'+name){
-
-
               $('html').text().includes(req.query.loc)
-              console.log(  $('html').text().includes(req.query.loc));
-
               var parag = ""
               $('sup').remove();
               $('span.mw-editsection').remove()
@@ -79,7 +77,6 @@ app.get('/wiki', function (req, res) {
               var attrazione = req.query.attr
               attrazione = attrazione.replace(/%27/g,".27")
               title = $('body').find('#'+attrazione).html()
-              console.log("title =" + title)
               if(title == null){
                 parag = ""
 
@@ -90,22 +87,14 @@ app.get('/wiki', function (req, res) {
                   attrazione = replaceAll(attrazione,"%27","'")
                   title = $(this).text().replace(/ *\([^)]*\) */g, " ")
                   title = title.replace(/ *\"[^)]*\" */g, " ")
-                  console.log("confronto tra " +attrazione +" e "+$(this).text())
-                   console.log("Compare "+Compare(attrazione,$(this).text()))
-                   console.log("similarity "+similarity(attrazione,$(this).text()))
                  if(similarity(attrazione,title) > 0.8){
-                          console.log(Compare(attrazione,$(this).text()))
                           title = $(this);
                           return false;
                           }
                 else if(similarity(attrazione,title) > 0.55){
                     var trovato = true
                     var parole = attrazione.split(" ")
-                    console.log("lunghezza "+parole.length)
                     for(i =0 ; i< parole.length; i++){
-                      console.log(parole[i])
-                      console.log(title)
-                      console.log()
                       if(!title.includes(parole[i])){
                         trovato = false;
                         break;
@@ -125,24 +114,19 @@ app.get('/wiki', function (req, res) {
 
                 })
 
-
-                    console.log("title "+title)
                     if(title != null){
                     while(title.parent().next().find('span.mw-headline').length < 1){
-
                         var test = title.parent().next().text()
-                        console.log(test)
-
                         title.parent().next().remove()
                           parag = parag + "<p>"+test+"</p>"
                     }
-                      console.log("finitos")}
+            }
 
 
               }
               if(parag == "")
                   parag = "<span class =\"assente\">descrizione non disponibile</span>"
-              console.log()
+
 
               json.push({
                 attr : parag
@@ -152,9 +136,8 @@ app.get('/wiki', function (req, res) {
 
         else if (localita){
           var localita = $('html').text().includes(req.query.loc)
-          var ciccio =$('body').find('a.image img').first()
-                  console.log(  $('html').text().includes(req.query.loc));
-          console.log(ciccio.attr("src"))
+
+
           $('a').each(function(i,elem){
             if($(this).hasClass('image')){
             $(this).removeAttr('href');
@@ -165,12 +148,12 @@ app.get('/wiki', function (req, res) {
           })
 
           while($('span#Voci_correlate').parent().next().html() !== null){
-            console.log("sto qua")
+
                 $('span#Voci_correlate').parent().next().remove()
           }
           $('span#Voci_correlate').remove()
           while($('span#Bibliografia').parent().next().html() !== null){
-            console.log("sto qua")
+
                 $('span#Bibliografia').parent().next().remove()
           }
           $('span#Bibliografia').remove()
@@ -196,28 +179,24 @@ app.get('/wiki', function (req, res) {
 
           $('table.sinottico').find('img').attr('src')
 
-          console.log($('table.sinottico').find('img').attr('src'))
-
-            $('div.mw-references-wrap').remove()
+          $('div.mw-references-wrap').remove()
           $('sup').remove();
           $('span.mw-editsection').remove()
           $('#Note').remove()
 
-
-          console.log("salve sono stato qua")
           var wiki = $('html').find('#mw-content-text').html()
 
           json.push({
             attr : $('html').find('#mw-content-text').html()
           })
-          console.log("json = "+ json.length)
+
           }
          else{
             json.push({
               attr : "<span class =\"assente\">descrizione non disponibile</span>"
             })
           }
-          console.log("ciccioco")
+
           res.send(json)
           json = [];
         }
@@ -232,7 +211,7 @@ app.get('/wiki', function (req, res) {
 
 
 app.listen(5000, function () {
-  console.log('Example app listening on port 3000!')
+  console.log('Example app listening on port 5000!')
 })
 
 

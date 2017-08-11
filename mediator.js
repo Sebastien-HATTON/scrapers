@@ -63,6 +63,19 @@ app.get('/tarev', function(req, res) {
     res.redirect(myIp + ':8083?placeid=' + req.query.placeid + '&risid=' + req.query.risid + '&page=' + req.query.page);
 })
 
+app.get('/sagre', function(req, res) {
+  res.redirect(myIp + ':3000/sagre?regione=' + req.query.regione + '&provincia='
+  + req.query.provincia + '&mese=' + req.query.mese + '&num=' + req.query.num);
+})
+
+app.get('/sagredescr', function(req, res) {
+  res.redirect(myIp + ':4000/desc?url=' + req.query.url);
+})
+
+app.get('/wiki', function(req, res) {
+  res.redirect(myIp + ':5000/wiki?attr=' + req.query.attr + '&loc=' + req.query.loc);
+})
+
 app.listen(8090, function() {
   console.log('Mediator listening on port 8090!');
 })
