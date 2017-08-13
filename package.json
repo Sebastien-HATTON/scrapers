@@ -12,11 +12,15 @@
     "casper": "^0.1.1",
     "cheerio": "^1.0.0-rc.1",
     "express": "^4.15.3",
+    "ip": "^1.1.5",
     "node-cache": "^4.1.1",
+    "node-cron": "^1.2.0",
+    "node-schedule": "^1.2.3",
     "phantom": "^4.0.4",
     "request": "^2.81.0",
     "scrapejs": "^1.0.4",
     "selenium-webdriver": "^3.5.0",
-    "spooky": "^0.2.5"
+    "spooky": "^0.2.5",
+    "xvfb": "^0.2.3"
   }
 }
