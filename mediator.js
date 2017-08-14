@@ -13,7 +13,7 @@ var taCache = new CachemanMongo('mongodb://127.0.0.1:27017/cache', {
   collection: 'ta'
 });
 var app = express();
-
+var ttl = 999999999;
 app.all('/*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -29,7 +29,7 @@ request('http://169.254.169.254/latest/meta-data/public-hostname', function(erro
       if (error || value == null) {
         request(myIp + ':8084', function(error, response, body) {
           if (!error && response.statusCode == 200) {
-            qcCache.set('data', body, 999999999)
+            qcCache.set('data', body, ttl)
           } else
             console.log(error)
         })
@@ -58,15 +58,27 @@ app.get('/qc', function(req, res) {
   // res.redirect(myIp + ':8084/');
   // res.send(JSON.parse(myCache.get("data", true))[req.query.regione]);
   qcCache.get('data', (error, value) => {
-    if(error)
+    if (error)
       throw error;
     else
-       res.send(JSON.parse(value)[req.query.regione]);
+      res.send(JSON.parse(value)[req.query.regione]);
   })
 })
 
 app.get('/qcpage', function(req, res) {
-  res.redirect(myIp + ':8084/page?link=' + req.query.link);
+  // res.redirect(myIp + ':8084/page?link=' + req.query.link);
+  qcPagesCache.get(req.query.link, (error, value) => {
+    if (error || value == null) {
+      request(myIp + ':8084/page?link=' + req.query.link, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+          qcPagesCache.set(req.query.link, body, ttl);
+          res.send(JSON.parse(body));
+        } else
+          console.log(error)
+      })
+    } else
+      res.send(value);
+  })
 })
 
 app.get('/taattr', function(req, res) {
