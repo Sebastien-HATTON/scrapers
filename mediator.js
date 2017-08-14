@@ -61,7 +61,7 @@ app.get('/qc', function(req, res) {
     if(error)
       console.log('error');
     else
-       res.send(JSON.parse(value[req.query.regione]);
+       res.send(JSON.parse(value[req.query.regione]));
   })
 })
 
