@@ -29,7 +29,7 @@ request('http://169.254.169.254/latest/meta-data/public-hostname', function(erro
       if (error || value == null) {
         request(myIp + ':8084', function(error, response, body) {
           if (!error && response.statusCode == 200) {
-            qcCache.set('data', body, (error) => console.log(console.error()))
+            qcCache.set('data', body, (error) => console.log(error))
           } else
             console.log(error)
         })
