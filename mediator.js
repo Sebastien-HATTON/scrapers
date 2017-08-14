@@ -59,9 +59,9 @@ app.get('/qc', function(req, res) {
   // res.send(JSON.parse(myCache.get("data", true))[req.query.regione]);
   qcCache.get('data', (error, value) => {
     if(error)
-      console.log('error');
+      throw error;
     else
-       res.send(JSON.parse(value[req.query.regione]));
+       res.json(value[req.query.regione]);
   })
 })
 
