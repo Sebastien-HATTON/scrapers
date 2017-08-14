@@ -82,9 +82,21 @@ app.get('/qcpage', function(req, res) {
 })
 
 app.get('/taattr', function(req, res) {
-  if (req.query.placeid == undefined)
-    res.redirect(myIp + ':8080?loc=' + req.query.loc);
-  else
+  if (req.query.placeid == undefined) {
+    //res.redirect(myIp + ':8080?loc=' + req.query.loc);
+    taCache.get(req.query.loc, (error, value) => {
+      if (error || value == null) {
+        request(myIp + ':8080?loc=' + req.query.loc, function(error, response, body) {
+          if (!error && response.statusCode == 200) {
+            res.send(JSON.parse(body));
+            taCache.set(req.query.loc, body, ttl);
+          } else
+            console.log(error)
+        })
+      } else
+        res.send(value);
+    })
+  } else
     res.redirect(myIp + ':8080?placeid=' + req.query.placeid + '&page=' + req.query.page);
 })
 
