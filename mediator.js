@@ -26,10 +26,9 @@ request('http://169.254.169.254/latest/meta-data/public-hostname', function(erro
     console.log('http://' + body)
     myIp = 'http://' + body;
     qcCache.get('data', (error, value) => {
-	if (error || value == null) {
+      if (error || value == null) {
         request(myIp + ':8084', function(error, response, body) {
           if (!error && response.statusCode == 200) {
-            // myCache.set("data", body);
             qcCache.set('data', body, (error) => console.log(console.error()))
           } else
             console.log(error)
@@ -57,7 +56,13 @@ app.get('/placedetrev', function(req, res) {
 
 app.get('/qc', function(req, res) {
   // res.redirect(myIp + ':8084/');
-  res.send(JSON.parse(myCache.get("data", true))[req.query.regione]);
+  // res.send(JSON.parse(myCache.get("data", true))[req.query.regione]);
+  qcCache.get('data', (error, value) => {
+    if(error)
+      console.log('error');
+    else
+       res.send(JSON.parse(value[req.query.regione]);
+  })
 })
 
 app.get('/qcpage', function(req, res) {
