@@ -1,7 +1,17 @@
 var express = require('express');
 var request = require('request');
-const NodeCache = require( "node-cache" );
+const NodeCache = require("node-cache");
 const myCache = new NodeCache();
+var CachemanMongo = require('cacheman-mongo');
+var qcCache = new CachemanMongo('mongodb://127.0.0.1:27017/cache', {
+  collection: 'qc'
+});
+var qcPagesCache = new CachemanMongo('mongodb://127.0.0.1:27017/cache', {
+  collection: 'qcPages'
+});
+var taCache = new CachemanMongo('mongodb://127.0.0.1:27017/cache', {
+  collection: 'ta'
+});
 var app = express();
 
 app.all('/*', function(req, res, next) {
@@ -15,11 +25,16 @@ request('http://169.254.169.254/latest/meta-data/public-hostname', function(erro
   if (!error && response.statusCode == 200) {
     console.log('http://' + body)
     myIp = 'http://' + body;
-    request(myIp + ':8084', function(error, response, body) {
-      if (!error && response.statusCode == 200) {
-        myCache.set("data", body);
-      } else
-        console.log(error)
+    qcCache.get('data', (error, value) => {
+      if (error) {
+        request(myIp + ':8084', function(error, response, body) {
+          if (!error && response.statusCode == 200) {
+            // myCache.set("data", body);
+            qcCache.set('data', body, (error) => console.log(console.error()))
+          } else
+            console.log(error)
+        })
+      }
     })
   }
 })
@@ -64,8 +79,8 @@ app.get('/tarev', function(req, res) {
 })
 
 app.get('/sagre', function(req, res) {
-  res.redirect(myIp + ':3000/sagre?regione=' + req.query.regione + '&provincia='
-  + req.query.provincia + '&mese=' + req.query.mese + '&num=' + req.query.num);
+  res.redirect(myIp + ':3000/sagre?regione=' + req.query.regione + '&provincia=' +
+    req.query.provincia + '&mese=' + req.query.mese + '&num=' + req.query.num);
 })
 
 app.get('/sagredescr', function(req, res) {
