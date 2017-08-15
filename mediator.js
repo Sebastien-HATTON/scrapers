@@ -88,8 +88,10 @@ app.get('/taattr', function(req, res) {
       if (error || value == null) {
         request(myIp + ':8080?loc=' + req.query.loc, function(error, response, body) {
           if (!error && response.statusCode == 200) {
-            res.send(JSON.parse(body));
-            taCache.set(req.query.loc, body, ttl);
+            var jbody = JSON.parse(body)
+            res.send(jbody);
+            if(jbody.places[0].img.indexOf("https://static.tacdn.com/img2/x.gif") == -1)
+              taCache.set(req.query.loc, body, ttl);
           } else
             console.log(error)
         })
