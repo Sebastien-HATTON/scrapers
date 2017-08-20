@@ -12,6 +12,9 @@ var qcPagesCache = new CachemanMongo('mongodb://127.0.0.1:27017/cache', {
 var taCache = new CachemanMongo('mongodb://127.0.0.1:27017/cache', {
   collection: 'ta'
 });
+var taRevCache = new CachemanMongo('mongodb://127.0.0.1:27017/cache', {
+  collection: 'taRev'
+});
 var app = express();
 var ttl = 999999999;
 app.all('/*', function(req, res, next) {
@@ -90,7 +93,7 @@ app.get('/taattr', function(req, res) {
           if (!error && response.statusCode == 200) {
             var jbody = JSON.parse(body)
             res.send(jbody);
-            if(jbody.places[0].img.indexOf("https://static.tacdn.com/img2/x.gif") == -1)
+            if (jbody.places[0].img.indexOf("https://static.tacdn.com/img2/x.gif") == -1)
               taCache.set(req.query.loc, body, ttl);
           } else
             console.log(error)
@@ -103,9 +106,21 @@ app.get('/taattr', function(req, res) {
 })
 
 app.get('/tarev', function(req, res) {
-  if (req.query.risid == undefined)
-    res.redirect(myIp + ':8083?ris=' + req.query.ris + '&citta=' + req.query.citta);
-  else
+  if (req.query.risid == undefined) {
+    taRevCache.get(req.query.ris + '-' + req.query.citta, (error, value) => {
+      if (error || value == null) {
+        request(myIp + ':8083?ris=' + req.query.ris + '&citta=' + req.query.citta, (error, response, body) => {
+          if (!error && response.statusCode == 200) {
+            var jbody = JSON.parse(body);
+            res.send(jbody);
+            taRevCache.set(req.query.ris + '-' + req.query.citta, body, 60 * 60)
+          } else
+            console.log(error);
+        })
+      } else
+        res.send(value);
+    })
+  } else
     res.redirect(myIp + ':8083?placeid=' + req.query.placeid + '&risid=' + req.query.risid + '&page=' + req.query.page);
 })
 
