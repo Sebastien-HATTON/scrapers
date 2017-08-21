@@ -130,7 +130,7 @@ app.get('/sagre', function(req, res) {
 })
 
 app.get('/sagredescr', function(req, res) {
-  res.redirect(myIp + ':4000/desc?url=' + req.query.url);
+  res.redirect(myIp + ':4000/descr?url=' + req.query.url);
 })
 
 app.get('/wiki', function(req, res) {
