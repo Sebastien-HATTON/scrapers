@@ -155,7 +155,7 @@ function sendTaAtt(socket, loc) {
       request(myIp + ':8080?loc=' + loc, function(error, response, body) {
         if (!error && response.statusCode == 200) {
           var jbody = JSON.parse(body)
-          socket.emit('taAttr', jbody);
+          socket.emit('taAttr', JSON.stringify(jbody));
           if (jbody.places[0].img != undefined && jbody.places[0].img.indexOf("https://static.tacdn.com/img2/x.gif") == -1)
             taCache.set(loc, body, ttl);
         } else
