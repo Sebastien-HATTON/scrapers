@@ -134,7 +134,7 @@ app.get('/taattr', function(req, res) {
     res.redirect(myIp + ':8080?placeid=' + req.query.placeid + '&page=' + req.query.page);
 })
 
-sendTaAtt(socket, loc) {
+function sendTaAtt(socket, loc) {
   taCache.get(loc, (error, value) => {
     if (error || value == null) {
       request(myIp + ':8080?loc=' + loc, function(error, response, body) {
@@ -149,7 +149,6 @@ sendTaAtt(socket, loc) {
     } else
       socket.emit('taAttr', value);
   })
-
 }
 
 app.get('/tarev', function(req, res) {
