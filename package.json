@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cacheman-mongo": "^1.0.3",
     "casper": "^0.1.1",
     "cheerio": "^1.0.0-rc.1",
     "express": "^4.15.3",
@@ -18,8 +19,10 @@
     "node-schedule": "^1.2.3",
     "phantom": "^4.0.4",
     "request": "^2.81.0",
+    "request-promise-native": "^1.0.4",
     "scrapejs": "^1.0.4",
     "selenium-webdriver": "^3.5.0",
+    "socket.io": "^2.0.3",
     "spooky": "^0.2.5",
     "xvfb": "^0.2.3"
   }
