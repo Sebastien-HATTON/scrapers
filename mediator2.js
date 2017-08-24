@@ -57,14 +57,20 @@ io.on('connection', (socket) => {
         var data = JSON.parse(data)
         rp(myIp + ':8082/?lat=' + data.lat + '&lng=' + data.lng + '&radius=2000')
           .then(data => socket.emit('ristoranti', data))
-        qcCache.get('data', (error, value) => {
-          if (error)
-            throw error;
-          else
-            socket.emit('qc', JSON.parse(value)[data.regione]);
-        })
+        sendQc(socket, data.regione);
         sendTaAtt(socket, data.citta);
       })
+  })
+  socket.on('getRevData', (data) => {
+    rp(myIp + ':8081/reverse?lat=' + data.lat + "&lng=" + data.lng)
+      .then(data => {
+        socket.emit('placeDetails', data);
+        var data = JSON.parse(data)
+        sendQc(socket, data.regione);
+        sendTaAtt(socket, data.citta);
+      })
+    rp(myIp + ':8082/?lat=' + data.lat + '&lng=' + data.lng + '&radius=2000')
+      .then(data => socket.emit('ristoranti', data))
   })
 })
 
@@ -133,6 +139,15 @@ app.get('/taattr', function(req, res) {
   } else
     res.redirect(myIp + ':8080?placeid=' + req.query.placeid + '&page=' + req.query.page);
 })
+
+function sendQc(socket, regione) {
+  qcCache.get('data', (error, value) => {
+    if (error)
+      throw error;
+    else
+      socket.emit('qc', JSON.parse(value)[regione]);
+  })
+}
 
 function sendTaAtt(socket, loc) {
   taCache.get(loc, (error, value) => {
