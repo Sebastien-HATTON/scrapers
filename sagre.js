@@ -10,7 +10,7 @@ app.all('/*', function(req, res, next) {
 });
 
 app.get('/sagre', function (req, res) {
-  url = 'http://www.sagreneiborghi.it/cerca/regione-'+req.query.regione+'/provincia-di-'+req.query.provincia+'/mese-di-'+req.query.mese+'/page/'+req.query.num+'/';
+  url = 'http://www.sagreneiborghi.it/cerca/regione-'+req.query.regione+'/provincia-di-'+req.query.provincia.toLowerCase() +'/mese-di-'+req.query.mese+'/page/'+req.query.num+'/';
   console.log(url)
   var json = []
   var url_sagre =[]
